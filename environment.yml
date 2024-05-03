@@ -1,0 +1,10 @@
+name: mesh2depth
+channels:
+  - conda-forge  
+dependencies:
+  - python>=3.8
+  - pip
+  - pip:
+      - numpy
+      - PyOpenGL
+      - PyGLM
