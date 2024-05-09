@@ -2,6 +2,7 @@ import numpy as np
 from typing import List
 import glm
 import math
+import pyrr
 
 class Camera:
     projection: glm.mat4
@@ -11,12 +12,12 @@ class Camera:
     height: int
     width: int
 
-    def __init__(self, 
+    def __init__(self,
                  K: np.ndarray[(3,3), np.float32]=np.eye(3), # intrinsic
                  w2c: np.ndarray[(4,4), np.float32]=np.eye(4), # cv
-                 near: float=0.01, 
-                 far: float=100, 
-                 height: int=256, 
+                 near: float=0.01,
+                 far: float=100,
+                 height: int=256,
                  width: int=256):
         c2w = np.linalg.inv(w2c) # [right | down | front | t]
         c2w_gl = np.copy(c2w)
@@ -43,20 +44,20 @@ class Camera:
         projection_np[0, 0] = 2 * fx / width
         projection_np[1, 1] = 2 * fy / height
         projection_np[2, 2] = -(far + near) / (far - near)
-        
+
         # Set off-diagonal elements
         projection_np[0, 2] = 2 * cx / width - 1
         projection_np[1, 2] = 2 * cy - height - 1
         projection_np[3, 2] = 1.0
         projection_np[2, 3] = -2 * far * near / (far - near)
         self.projection = glm.mat4(projection_np)
-    
-    def set(self, 
-            cam_pos: List[float], 
-            cam_lookat: List[float], 
+
+    def set(self,
+            cam_pos: List[float],
+            cam_lookat: List[float],
             cam_up: List[float],
             x_fov: float,
-            near: float, 
+            near: float,
             far: float,
             height: int,
             width: int):
@@ -73,5 +74,5 @@ class Camera:
         self.height = height
         self.width = width
         aspect_ratio = width / height
-        y_fov = math.atan(math.tan(x_fov/2) / aspect_ratio) * 2
-        self.projection = glm.perspective(y_fov, self.width, self.height, self.near, self.far)
+        y_fov = math.atan(math.tan(x_fov / 2) / aspect_ratio) * 2
+        self.projection = glm.perspective(y_fov, self.width/self.height, self.near, self.far)

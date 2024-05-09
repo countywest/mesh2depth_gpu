@@ -1,6 +1,6 @@
 name: mesh2depth
 channels:
-  - conda-forge  
+  - conda-forge
 dependencies:
   - python>=3.8
   - pip
@@ -8,3 +8,5 @@ dependencies:
       - numpy
       - PyOpenGL
       - PyGLM
+      - glfw
+      - trimesh
