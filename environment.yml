@@ -2,7 +2,7 @@ name: mesh2depth
 channels:
   - conda-forge
 dependencies:
-  - python>=3.8
+  - python=3.8
   - pip
   - pip:
       - numpy
@@ -10,3 +10,5 @@ dependencies:
       - PyGLM
       - glfw
       - trimesh
+      - pytest
+      - nptyping

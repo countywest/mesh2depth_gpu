@@ -1,10 +1,11 @@
 from OpenGL.GL import *
 import numpy as np
+from nptyping import NDArray, Shape, Float32, UInt32
 
 class Mesh:
     def __init__(self,
-                 vertices_flatten: np.ndarray[(int), np.float32],
-                 faces_flatten: np.ndarray[(int), np.uint32]):
+                 vertices_flatten: NDArray[Shape["Any"], Float32],
+                 faces_flatten: NDArray[Shape["Any"], UInt32]):
         self.vao = glGenVertexArrays(1)
         glBindVertexArray(self.vao)
 

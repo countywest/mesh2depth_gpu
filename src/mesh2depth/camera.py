@@ -1,8 +1,8 @@
 import numpy as np
-from typing import List
+from typing import List, Dict
 import glm
 import math
-import pyrr
+from nptyping import NDArray, Shape, Float32
 
 class Camera:
     projection: glm.mat4
@@ -13,8 +13,8 @@ class Camera:
     width: int
 
     def __init__(self,
-                 K: np.ndarray[(3,3), np.float32]=np.eye(3), # intrinsic
-                 w2c: np.ndarray[(4,4), np.float32]=np.eye(4), # cv
+                 K: NDArray[Shape["3, 3"], Float32]=np.eye(3), # intrinsic
+                 w2c: NDArray[Shape["4, 4"], Float32]=np.eye(4), # cv
                  near: float=0.01,
                  far: float=100,
                  height: int=256,
@@ -76,3 +76,37 @@ class Camera:
         aspect_ratio = width / height
         y_fov = math.atan(math.tan(x_fov / 2) / aspect_ratio) * 2
         self.projection = glm.perspective(y_fov, self.width/self.height, self.near, self.far)
+
+def get_camera(params: Dict):
+    """
+    Args:
+        params: dictionary of camera params. Following two formats are allowed only.
+            {
+                'cam_pos': List[float],
+                'cam_lookat': List[float],
+                'cam_up': List[float],
+                'x_fov': float,
+                'near': float,
+                'far': float,
+                'height': int,
+                'width': int
+            }
+            or
+            {
+                'K': np.ndarray[(3,3), np.float32],
+                'w2c': np.ndarray[(4,4), np.float32],
+                'near': float,
+                'far': float,
+                'height': int,
+                'width': int
+            }
+    Return:
+        camera instance
+    """
+    if 'cam_pos' in params.keys():
+        camera = Camera()
+        camera.set(**params)
+    else:
+        camera = Camera(**params)
+
+    return camera

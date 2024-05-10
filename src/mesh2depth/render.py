@@ -7,6 +7,7 @@ from src.mesh2depth.depthmap import DepthMap
 import glfw
 import platform
 import os
+from nptyping import NDArray, Shape, UInt8
 
 class Renderer:
     def __init__(self):
@@ -34,7 +35,7 @@ class Renderer:
     def set_target(self, target: Mesh):
         self.target = target
 
-    def render(self, camera: Camera) -> np.ndarray[(int, int, 4), np.uint8]:
+    def render(self, camera: Camera) -> NDArray[Shape["Any, Any, 4"], UInt8]:
         depthmap = DepthMap(camera.width, camera.height)
 
         # render to a framebuffer
