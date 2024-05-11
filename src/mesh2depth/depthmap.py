@@ -18,3 +18,7 @@ class DepthMap:
         glDrawBuffer(GL_NONE)
         glReadBuffer(GL_NONE)
         glBindFramebuffer(GL_FRAMEBUFFER, 0)
+
+    def free(self):
+        glDeleteFramebuffers(1, self.fbo)
+        glDeleteTextures(1, self.depth_texture)

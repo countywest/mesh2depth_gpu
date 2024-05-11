@@ -64,4 +64,8 @@ class Renderer:
         z = buffer * 2 - 1
         depth = 2 * camera.near * camera.far / (camera.far + camera.near - z * (camera.far - camera.near))
         empty = buffer == 1.0
+
+        # free gpu memory
+        depthmap.free()
+
         return depth, empty
