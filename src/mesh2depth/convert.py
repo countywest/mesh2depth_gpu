@@ -3,7 +3,6 @@ from typing import List, Dict
 from src.mesh2depth.camera import get_camera
 from src.mesh2depth.mesh import Mesh
 from src.mesh2depth.render import Renderer
-from PIL import Image
 from OpenGL.GL import *
 from nptyping import NDArray, Shape, Float32, UInt32
 
