@@ -25,9 +25,6 @@ def convert(vertices: NDArray[Shape["Any, 3"], Float32],
                 faces_flatten=np.reshape(faces, -1).astype(np.uint32))
     renderer.set_target(mesh)
 
-    #dummy_camera = Camera()
-    #renderer.render(dummy_camera)
-
     depthmaps = []
     for _, camera in enumerate(cameras):
         depth, empty = renderer.render(camera)
