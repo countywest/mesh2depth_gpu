@@ -1,5 +1,4 @@
 from OpenGL.GL import *
-import numpy as np
 from nptyping import NDArray, Shape, Float32, UInt32
 
 class Mesh:

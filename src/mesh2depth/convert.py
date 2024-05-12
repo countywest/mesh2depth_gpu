@@ -32,5 +32,5 @@ def convert(vertices: NDArray[Shape["Any, 3"], Float32],
 
         del camera
 
-    renderer.terminate()
+    renderer.destroy()
     return depthmaps

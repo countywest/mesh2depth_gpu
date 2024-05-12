@@ -4,33 +4,21 @@ from src.mesh2depth.camera import Camera
 from src.mesh2depth.mesh import Mesh
 from src.mesh2depth.shader import Shader
 from src.mesh2depth.depthmap import DepthMap
-import glfw
-import platform
 import os
 from nptyping import NDArray, Shape, UInt8
+import glcontext
 
 class Renderer:
     def __init__(self):
-        if not glfw.init():
-            print("Cannot initialize GLFW")
-            exit()
-        glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
-        glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
-        glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
-        if platform.system() == "Darwin":
-            glfw.window_hint(glfw.OPENGL_FORWARD_COMPAT, GL_TRUE)
-            glfw.window_hint(glfw.COCOA_RETINA_FRAMEBUFFER, GL_FALSE) # to make framebuffer size and window size equal
-
-        self.window = glfw.create_window(256, 256, "dummy", None, None)
-        glfw.make_context_current(self.window)
+        self.ctx = glcontext.default_backend()(glversion=330, mode='standalone')
 
         self.shader = Shader(vs_path=os.path.join(os.path.dirname(__file__), 'shaders', 'mesh.vert'),
                              fs_path=os.path.join(os.path.dirname(__file__), 'shaders', 'mesh.frag'))
 
         glEnable(GL_DEPTH_TEST)
 
-    def terminate(self):
-        glfw.terminate()
+    def destroy(self):
+        self.ctx.release()
 
     def set_target(self, target: Mesh):
         self.target = target

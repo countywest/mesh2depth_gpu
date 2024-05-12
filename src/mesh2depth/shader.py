@@ -2,7 +2,6 @@ from OpenGL.GL import *
 import OpenGL.GL.shaders
 import numpy as np
 import glm
-import os
 
 def compile_shader(vertex_shader: str, fragment_shader: str):
     v_shader = OpenGL.GL.shaders.compileShader(vertex_shader, GL_VERTEX_SHADER)
