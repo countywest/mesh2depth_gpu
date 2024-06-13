@@ -1,4 +1,4 @@
-assets/
 *.pyc
 build/
 *.egg-info
+bunny*

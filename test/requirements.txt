@@ -1,0 +1,5 @@
+numpy
+trimesh
+matplotlib
+mesh2depth_gpu
+pytest
