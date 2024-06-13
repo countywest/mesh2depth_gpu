@@ -1,8 +1,8 @@
 import numpy as np
 from typing import List, Dict
-from src.mesh2depth.camera import get_camera
-from src.mesh2depth.mesh import Mesh
-from src.mesh2depth.render import Renderer
+from src.mesh2depth_gpu.camera import get_camera
+from src.mesh2depth_gpu.mesh import Mesh
+from src.mesh2depth_gpu.render import Renderer
 from OpenGL.GL import *
 from nptyping import NDArray, Shape, Float32, UInt32
 
