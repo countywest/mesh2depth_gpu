@@ -1,2 +1,4 @@
 assets/
 *.pyc
+build/
+*.egg-info
