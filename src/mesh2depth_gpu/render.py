@@ -1,9 +1,9 @@
 from OpenGL.GL import *
 import numpy as np
-from src.mesh2depth_gpu.camera import Camera
-from src.mesh2depth_gpu.mesh import Mesh
-from src.mesh2depth_gpu.shader import Shader
-from src.mesh2depth_gpu.depthmap import DepthMap
+from mesh2depth_gpu.camera import Camera
+from mesh2depth_gpu.mesh import Mesh
+from mesh2depth_gpu.shader import Shader
+from mesh2depth_gpu.depthmap import DepthMap
 import os
 from nptyping import NDArray, Shape, UInt8
 import glcontext

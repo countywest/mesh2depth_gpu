@@ -10,6 +10,8 @@ setup(
     platforms=['any'],
     packages=['mesh2depth_gpu'],
     package_dir={'': 'src'},
+    package_data={'mesh2depth_gpu': ['shaders/mesh.frag', 'shaders/mesh.vert']},
+    include_package_data=True,
     install_requires=[
         'numpy',
         'PyOpenGL',
