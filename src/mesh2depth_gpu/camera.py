@@ -3,7 +3,9 @@ from typing import List, Dict
 import glm
 import math
 from nptyping import NDArray, Shape, Float32
+from dataclasses import dataclass
 
+@dataclass
 class Camera:
     projection: glm.mat4
     view: glm.mat4
@@ -12,72 +14,71 @@ class Camera:
     height: int
     width: int
 
-    def __init__(self,
-                 K: NDArray[Shape["3, 3"], Float32]=np.eye(3), # intrinsic
-                 w2c: NDArray[Shape["4, 4"], Float32]=np.eye(4), # cv
-                 near: float=0.01,
-                 far: float=100,
-                 height: int=256,
-                 width: int=256):
-        c2w = np.linalg.inv(w2c) # [right | down | front | t]
-        c2w_gl = np.copy(c2w)
-        c2w_gl[:3, 1] = -c2w_gl[:3, 1] # up
-        c2w_gl[:3, 2] = -c2w_gl[:3, 2] # front
-        w2c_gl = np.linalg.inv(c2w_gl)
-        self.view = glm.mat4(w2c_gl)
+# same as https://github.com/daeyun/mesh-to-depth/tree/master?tab=readme-ov-file#example
+@dataclass
+class CameraParam1:
+    cam_pos: List[float]
+    cam_lookat: List[float]
+    cam_up: List[float]
+    x_fov: float
+    near: float
+    far: float
+    height: int
+    width: int
 
-        self.near = near
-        self.far = far
-        self.height = height
-        self.width = width
+    def to_camera(self) -> Camera:
+        cam_pos = glm.vec3(self.cam_pos)
+        target_pos = glm.vec3(self.cam_lookat)
+        up_vec = glm.vec3(self.cam_up)
+        view = glm.lookAt(cam_pos, target_pos, up_vec)
+
+        aspect_ratio = self.width / self.height
+        y_fov = math.atan(math.tan(self.x_fov / 2) / aspect_ratio) * 2
+        projection = glm.perspective(y_fov, self.width/self.height, self.near, self.far)
+
+        return Camera(projection, view, self.near, self.far, self.height, self.width)
+
+@dataclass
+class CameraParam2:
+    K: NDArray[Shape["3, 3"], Float32] # intrinsic
+    m2c: NDArray[Shape["4, 4"], Float32] # cv
+    near: float
+    far: float
+    height: int
+    width: int
+
+    def to_camera(self) -> Camera:
+        c2m = np.linalg.inv(self.m2c) # [right | down | front | t]
+        c2m_gl = np.copy(c2m)
+        c2m_gl[:3, 1] = -c2m_gl[:3, 1] # up
+        c2m_gl[:3, 2] = -c2m_gl[:3, 2] # front
+        m2c_gl = np.linalg.inv(c2m_gl)
+        view = glm.mat4(m2c_gl)
 
         # ====================
         # intrinsic2projection
         # ====================
-        fx = K[0,0]
-        fy = K[1,1]
-        cx = K[0,2]
-        cy = K[1,2]
+        fx = self.K[0,0]
+        fy = self.K[1,1]
+        cx = self.K[0,2]
+        cy = self.K[1,2]
         projection_np = np.zeros((4, 4))
 
         # Set diagonal elements
-        projection_np[0, 0] = 2 * fx / width
-        projection_np[1, 1] = 2 * fy / height
-        projection_np[2, 2] = -(far + near) / (far - near)
+        projection_np[0, 0] = 2 * fx / self.width
+        projection_np[1, 1] = 2 * fy / self.height
+        projection_np[2, 2] = -(self.far + self.near) / (self.far - self.near)
 
         # Set off-diagonal elements
-        projection_np[0, 2] = 2 * cx / width - 1
-        projection_np[1, 2] = 2 * cy - height - 1
+        projection_np[0, 2] = 2 * cx / self.width - 1
+        projection_np[1, 2] = 2 * cy - self.height - 1
         projection_np[3, 2] = 1.0
-        projection_np[2, 3] = -2 * far * near / (far - near)
-        self.projection = glm.mat4(projection_np)
+        projection_np[2, 3] = -2 * self.far * self.near / (self.far - self.near)
+        projection = glm.mat4(projection_np)
 
-    def set(self,
-            cam_pos: List[float],
-            cam_lookat: List[float],
-            cam_up: List[float],
-            x_fov: float,
-            near: float,
-            far: float,
-            height: int,
-            width: int):
-        """
-        Set camera params with other representations (same as https://github.com/daeyun/mesh-to-depth/tree/master?tab=readme-ov-file#example)
-        """
-        cam_pos = glm.vec3(cam_pos)
-        target_pos = glm.vec3(cam_lookat)
-        up_vec = glm.vec3(cam_up)
-        self.view = glm.lookAt(cam_pos, target_pos, up_vec)
+        return Camera(projection, view, self.near, self.far, self.height, self.width)
 
-        self.near = near
-        self.far = far
-        self.height = height
-        self.width = width
-        aspect_ratio = width / height
-        y_fov = math.atan(math.tan(x_fov / 2) / aspect_ratio) * 2
-        self.projection = glm.perspective(y_fov, self.width/self.height, self.near, self.far)
-
-def get_camera(params: Dict):
+def get_camera(params: Dict) -> Camera:
     """
     Args:
         params: dictionary of camera params. Following two formats are allowed only.
@@ -94,7 +95,7 @@ def get_camera(params: Dict):
             or
             {
                 'K': np.ndarray[(3,3), np.float32],
-                'w2c': np.ndarray[(4,4), np.float32],
+                'm2c': np.ndarray[(4,4), np.float32],
                 'near': float,
                 'far': float,
                 'height': int,
@@ -104,9 +105,21 @@ def get_camera(params: Dict):
         camera instance
     """
     if 'cam_pos' in params.keys():
-        camera = Camera()
-        camera.set(**params)
+        camera_param: CameraParam1 = CameraParam1(params['cam_pos'],
+                                                  params['cam_lookat'],
+                                                  params['cam_up'],
+                                                  params['x_fov'],
+                                                  params['near'],
+                                                  params['far'],
+                                                  params['height'],
+                                                  params['width'])
     else:
-        camera = Camera(**params)
+        camera_param: CameraParam2 = CameraParam2(params['K'],
+                                                  params['m2c'],
+                                                  params['near'],
+                                                  params['far'],
+                                                  params['height'],
+                                                  params['width'])
 
+    camera = camera_param.to_camera()
     return camera
