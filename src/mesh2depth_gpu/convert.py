@@ -12,8 +12,28 @@ def convert(vertices: NDArray[Shape["Any, 3"], Float32],
             empty_pixel_value: float = np.nan):
     """
     Args:
-        vertices, faces: mesh data
-        cameras: list of Camera params
+        vertices, faces: mesh geometry data
+        params: list of camera params dictionaries
+                following two formats are allowed for the dictionary
+                {
+                    'cam_pos': List[float],
+                    'cam_lookat': List[float],
+                    'cam_up': List[float],
+                    'x_fov': float,
+                    'near': float,
+                    'far': float,
+                    'height': int,
+                    'width': int
+                }
+                or
+                {
+                    'K': np.ndarray[(3,3), np.float32],
+                    'm2c': np.ndarray[(4,4), np.float32],
+                    'near': float,
+                    'far': float,
+                    'height': int,
+                    'width': int
+                }
         empty_pixel_value: float
     Return:
         depthmaps: list of depth map w.r.t cameras

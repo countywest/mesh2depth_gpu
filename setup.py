@@ -23,6 +23,7 @@ setup(
         'PyGLM',
         'trimesh',
         'nptyping',
-        'glcontext'
+        'glcontext',
+        'dacite'
     ]
 )

@@ -4,6 +4,7 @@ import glm
 import math
 from nptyping import NDArray, Shape, Float32
 from dataclasses import dataclass
+from dacite import from_dict
 
 @dataclass
 class Camera:
@@ -81,45 +82,14 @@ class CameraParam2:
 def get_camera(params: Dict) -> Camera:
     """
     Args:
-        params: dictionary of camera params. Following two formats are allowed only.
-            {
-                'cam_pos': List[float],
-                'cam_lookat': List[float],
-                'cam_up': List[float],
-                'x_fov': float,
-                'near': float,
-                'far': float,
-                'height': int,
-                'width': int
-            }
-            or
-            {
-                'K': np.ndarray[(3,3), np.float32],
-                'm2c': np.ndarray[(4,4), np.float32],
-                'near': float,
-                'far': float,
-                'height': int,
-                'width': int
-            }
+        params: a dictionary of camera parameters
     Return:
         camera instance
     """
     if 'cam_pos' in params.keys():
-        camera_param: CameraParam1 = CameraParam1(params['cam_pos'],
-                                                  params['cam_lookat'],
-                                                  params['cam_up'],
-                                                  params['x_fov'],
-                                                  params['near'],
-                                                  params['far'],
-                                                  params['height'],
-                                                  params['width'])
+        camera_param = from_dict(data_class=CameraParam1, data=params)
     else:
-        camera_param: CameraParam2 = CameraParam2(params['K'],
-                                                  params['m2c'],
-                                                  params['near'],
-                                                  params['far'],
-                                                  params['height'],
-                                                  params['width'])
+        camera_param = from_dict(data_class=CameraParam2, data=params)
 
     camera = camera_param.to_camera()
     return camera
