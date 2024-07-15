@@ -1,5 +1,10 @@
 from setuptools import setup
-from src.mesh2depth_gpu import __version__
+import os
+import sys
+ROOT_DIR = os.path.dirname(__file__)
+sys.path.append(os.path.join(ROOT_DIR, 'src', 'mesh2depth_gpu'))
+from version import __version__
+
 setup(
     name='mesh2depth_gpu',
     version=__version__,
