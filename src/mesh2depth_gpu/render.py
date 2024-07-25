@@ -7,10 +7,17 @@ from mesh2depth_gpu.depthmap import DepthMap
 import os
 from nptyping import NDArray, Shape, UInt8
 import glcontext
+import platform
 
 class Renderer:
-    def __init__(self):
-        self.ctx = glcontext.default_backend()(glversion=330, mode='standalone')
+    def __init__(self, gpu_id: int = 0):
+        system = platform.system().lower()
+        if system == 'linux':
+            os.environ['GLCONTEXT_DEVICE_INDEX'] = str(gpu_id)
+            create_ctx = glcontext.get_backend_by_name('egl')
+        else:
+            create_ctx = glcontext.default_backend()
+        self.ctx = create_ctx(glversion=330, mode='standalone')
 
         self.shader = Shader(vs_path=os.path.join(os.path.dirname(__file__), 'shaders', 'mesh.vert'),
                              fs_path=os.path.join(os.path.dirname(__file__), 'shaders', 'mesh.frag'))
