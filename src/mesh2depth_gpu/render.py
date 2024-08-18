@@ -9,18 +9,21 @@ from nptyping import NDArray, Shape, UInt8
 import glcontext
 import platform
 
+
 class Renderer:
     def __init__(self, gpu_id: int = 0):
         system = platform.system().lower()
-        if system == 'linux':
-            os.environ['GLCONTEXT_DEVICE_INDEX'] = str(gpu_id)
-            create_ctx = glcontext.get_backend_by_name('egl')
+        if system == "linux":
+            os.environ["GLCONTEXT_DEVICE_INDEX"] = str(gpu_id)
+            create_ctx = glcontext.get_backend_by_name("egl")
         else:
             create_ctx = glcontext.default_backend()
-        self.ctx = create_ctx(glversion=330, mode='standalone')
+        self.ctx = create_ctx(glversion=330, mode="standalone")
 
-        self.shader = Shader(vs_path=os.path.join(os.path.dirname(__file__), 'shaders', 'mesh.vert'),
-                             fs_path=os.path.join(os.path.dirname(__file__), 'shaders', 'mesh.frag'))
+        self.shader = Shader(
+            vs_path=os.path.join(os.path.dirname(__file__), "shaders", "mesh.vert"),
+            fs_path=os.path.join(os.path.dirname(__file__), "shaders", "mesh.frag"),
+        )
 
         glEnable(GL_DEPTH_TEST)
 
@@ -52,12 +55,17 @@ class Renderer:
         buffer = glGetTexImage(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, GL_FLOAT)
         glBindTexture(GL_TEXTURE_2D, 0)
 
-        buffer = np.reshape(buffer, (camera.height, camera.width)) # (h, w)
+        buffer = np.reshape(buffer, (camera.height, camera.width))  # (h, w)
         buffer = np.flip(buffer, axis=0)
 
         # linearize
         z = buffer * 2 - 1
-        depth = 2 * camera.near * camera.far / (camera.far + camera.near - z * (camera.far - camera.near))
+        depth = (
+            2
+            * camera.near
+            * camera.far
+            / (camera.far + camera.near - z * (camera.far - camera.near))
+        )
         empty = buffer == 1.0
 
         # free gpu memory

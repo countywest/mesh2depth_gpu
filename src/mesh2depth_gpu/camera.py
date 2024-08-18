@@ -6,6 +6,7 @@ from nptyping import NDArray, Shape, Float32
 from dataclasses import dataclass
 from dacite import from_dict
 
+
 @dataclass
 class Camera:
     projection: glm.mat4
@@ -14,6 +15,7 @@ class Camera:
     far: float
     height: int
     width: int
+
 
 # same as https://github.com/daeyun/mesh-to-depth/tree/master?tab=readme-ov-file#example
 @dataclass
@@ -35,34 +37,37 @@ class CameraParam1:
 
         aspect_ratio = self.width / self.height
         y_fov = math.atan(math.tan(self.x_fov / 2) / aspect_ratio) * 2
-        projection = glm.perspective(y_fov, self.width/self.height, self.near, self.far)
+        projection = glm.perspective(
+            y_fov, self.width / self.height, self.near, self.far
+        )
 
         return Camera(projection, view, self.near, self.far, self.height, self.width)
 
+
 @dataclass
 class CameraParam2:
-    K: NDArray[Shape["3, 3"], Float32] # intrinsic
-    m2c: NDArray[Shape["4, 4"], Float32] # cv
+    K: NDArray[Shape["3, 3"], Float32]  # intrinsic
+    m2c: NDArray[Shape["4, 4"], Float32]  # cv
     near: float
     far: float
     height: int
     width: int
 
     def to_camera(self) -> Camera:
-        c2m = np.linalg.inv(self.m2c) # [right | down | front | t]
+        c2m = np.linalg.inv(self.m2c)  # [right | down | front | t]
         c2m_gl = np.copy(c2m)
-        c2m_gl[:3, 1] = -c2m_gl[:3, 1] # up
-        c2m_gl[:3, 2] = -c2m_gl[:3, 2] # front
+        c2m_gl[:3, 1] = -c2m_gl[:3, 1]  # up
+        c2m_gl[:3, 2] = -c2m_gl[:3, 2]  # front
         m2c_gl = np.linalg.inv(c2m_gl)
         view = glm.mat4(m2c_gl)
 
         # ====================
         # intrinsic2projection
         # ====================
-        fx = self.K[0,0]
-        fy = self.K[1,1]
-        cx = self.K[0,2]
-        cy = self.K[1,2]
+        fx = self.K[0, 0]
+        fy = self.K[1, 1]
+        cx = self.K[0, 2]
+        cy = self.K[1, 2]
         projection_np = np.zeros((4, 4))
 
         # Set diagonal elements
@@ -79,6 +84,7 @@ class CameraParam2:
 
         return Camera(projection, view, self.near, self.far, self.height, self.width)
 
+
 def get_camera(params: Dict) -> Camera:
     """
     Args:
@@ -86,7 +92,7 @@ def get_camera(params: Dict) -> Camera:
     Return:
         camera instance
     """
-    if 'cam_pos' in params.keys():
+    if "cam_pos" in params.keys():
         camera_param = from_dict(data_class=CameraParam1, data=params)
     else:
         camera_param = from_dict(data_class=CameraParam2, data=params)

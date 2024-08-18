@@ -3,6 +3,7 @@ import OpenGL.GL.shaders
 import numpy as np
 import glm
 
+
 def compile_shader(vertex_shader: str, fragment_shader: str):
     v_shader = OpenGL.GL.shaders.compileShader(vertex_shader, GL_VERTEX_SHADER)
     f_shader = OpenGL.GL.shaders.compileShader(fragment_shader, GL_FRAGMENT_SHADER)
@@ -15,10 +16,15 @@ def compile_shader(vertex_shader: str, fragment_shader: str):
     glDeleteShader(f_shader)
     return ID
 
+
 class Shader:
     def __init__(self, vs_path: str, fs_path: str):
-        self.vertex_shader = self.load(vs_path)# os.path.join(os.path.dirname(__file__), 'shaders', 'mesh.vert'))
-        self.fragment_shader = self.load(fs_path) #os.path.join(os.path.dirname(__file__), 'shaders', 'mesh.frag'))
+        self.vertex_shader = self.load(
+            vs_path
+        )  # os.path.join(os.path.dirname(__file__), 'shaders', 'mesh.vert'))
+        self.fragment_shader = self.load(
+            fs_path
+        )  # os.path.join(os.path.dirname(__file__), 'shaders', 'mesh.frag'))
         self.shader_program = compile_shader(self.vertex_shader, self.fragment_shader)
 
     def load(self, path: str):

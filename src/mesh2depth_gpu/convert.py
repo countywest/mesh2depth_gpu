@@ -6,11 +6,14 @@ from mesh2depth_gpu.render import Renderer
 from OpenGL.GL import *
 from nptyping import NDArray, Shape, Float32, UInt32
 
-def convert(vertices: NDArray[Shape["Any, 3"], Float32],
-            faces: NDArray[Shape["Any, 3"], UInt32],
-            params: List[Dict],
-            empty_pixel_value: float = np.nan,
-            gpu_id: int = 0):
+
+def convert(
+    vertices: NDArray[Shape["Any, 3"], Float32],
+    faces: NDArray[Shape["Any, 3"], UInt32],
+    params: List[Dict],
+    empty_pixel_value: float = np.nan,
+    gpu_id: int = 0,
+):
     """
     Args:
         vertices, faces: mesh geometry data
@@ -42,8 +45,10 @@ def convert(vertices: NDArray[Shape["Any, 3"], Float32],
     """
     cameras = [get_camera(param) for param in params]
     renderer = Renderer(gpu_id)
-    mesh = Mesh(vertices_flatten=np.reshape(vertices, -1).astype(np.float32),
-                faces_flatten=np.reshape(faces, -1).astype(np.uint32))
+    mesh = Mesh(
+        vertices_flatten=np.reshape(vertices, -1).astype(np.float32),
+        faces_flatten=np.reshape(faces, -1).astype(np.uint32),
+    )
     renderer.set_target(mesh)
 
     depthmaps = []
