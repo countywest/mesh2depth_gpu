@@ -21,7 +21,6 @@ setup(
         'numpy',
         'PyOpenGL',
         'PyGLM',
-        'trimesh',
         'nptyping',
         'glcontext',
         'dacite'
