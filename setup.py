@@ -13,6 +13,7 @@ setup(
     author_email="countywest@naver.com",
     description="Fast depthmap generation using headless rendering",
     long_description=open("README.md", encoding="utf-8").read(),
+    long_description_content_type="text/markdown",
     license="MIT",
     platforms=["any"],
     packages=["mesh2depth_gpu"],

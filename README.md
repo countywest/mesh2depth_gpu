@@ -1,6 +1,7 @@
 # mesh2depth_gpu
 
-<a href="https://github.com/countywest/mesh2depth_gpu/blob/main/LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg"></a>
+<a href="https://github.com/countywest/mesh2depth_gpu/blob/main/LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-green.svg"></a>
+![versions](https://img.shields.io/badge/python-3.7+-blue.svg)
 <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
 
 Fast depthmap generation using PyOpenGL.
@@ -19,7 +20,7 @@ import numpy as np
 import mesh2depth_gpu as m2d
 
 # camera parameters, type1
-# same as https://github.com/daeyun/mesh-to-depth?tab=readme-ov-file#example except for the 'is_depth' option.
+# same as https://github.com/daeyun/mesh-to-depth except for the 'is_depth' option.
 param1 = {
     "cam_pos": [1, 1, 1],
     "cam_lookat": [0, 0, 0],
