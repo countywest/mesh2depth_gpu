@@ -38,8 +38,8 @@ def test_bunny():
         "x_fov": x_fov,
         "near": radius * 0.01,
         "far": radius * 10,
-        "height": 1024,
-        "width": 1024,
+        "height": 512,
+        "width": 512,
     }
 
     # query mesh2depth

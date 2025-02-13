@@ -3,6 +3,7 @@ from typing import List, Dict
 from mesh2depth_gpu.camera import get_camera
 from mesh2depth_gpu.mesh import Mesh
 from mesh2depth_gpu.render import Renderer
+from mesh2depth_gpu.depthmap import DepthMap
 from OpenGL.GL import *
 from nptyping import NDArray, Shape, Float32, UInt32
 
@@ -59,5 +60,6 @@ def convert(
 
         del camera
 
+    DepthMap.destroy_textures()
     renderer.destroy()
     return depthmaps

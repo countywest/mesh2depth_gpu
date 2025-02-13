@@ -25,23 +25,26 @@ class Renderer:
             fs_path=os.path.join(os.path.dirname(__file__), "shaders", "mesh.frag"),
         )
 
+        self.fbo = glGenFramebuffers(1)
+
         glEnable(GL_DEPTH_TEST)
 
     def destroy(self):
+        glDeleteFramebuffers(1, [self.fbo])
         self.ctx.release()
 
     def set_target(self, target: Mesh):
         self.target = target
 
     def render(self, camera: Camera) -> NDArray[Shape["Any, Any, 4"], UInt8]:
-        depthmap = DepthMap(camera.width, camera.height)
+        depthmap = DepthMap(camera.width, camera.height, self.fbo)
 
         # render to a framebuffer
         self.shader.use()
         self.shader.set_matrix4x4("view", camera.view)
         self.shader.set_matrix4x4("projection", camera.projection)
         glViewport(0, 0, camera.width, camera.height)
-        glBindFramebuffer(GL_FRAMEBUFFER, depthmap.fbo)
+        glBindFramebuffer(GL_FRAMEBUFFER, self.fbo)
         glClear(GL_DEPTH_BUFFER_BIT)
 
         # draw mesh
@@ -67,8 +70,5 @@ class Renderer:
             / (camera.far + camera.near - z * (camera.far - camera.near))
         )
         empty = buffer == 1.0
-
-        # free gpu memory
-        depthmap.free()
 
         return depth, empty
