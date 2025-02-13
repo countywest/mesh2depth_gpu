@@ -22,9 +22,9 @@ import mesh2depth_gpu as m2d
 # camera parameters, type1
 # same as https://github.com/daeyun/mesh-to-depth except for the 'is_depth' option.
 param1 = {
-    "cam_pos": [1, 1, 1],
-    "cam_lookat": [0, 0, 0],
-    "cam_up": [0, 1, 0],
+    "cam_pos": [1.0, 1.0, 1.0],
+    "cam_lookat": [0.0, 0.0, 0.0],
+    "cam_up": [0.0, 1.0, 0.0],
     "x_fov": 0.349, # End-to-end field of view in radians
     "near": 0.01,
     "far": 100.0,
@@ -58,7 +58,7 @@ vertices = ...  # An array of shape (num_vertices, 3) and type np.float32.
 faces = ...  # An array of shape (num_faces, 3) and type np.uint32.
 
 # depthmap generation
-depth_maps = m2d.convert(vertices, faces, params, empty_pixel_value=np.nan)
+depth_maps = m2d.convert(vertices, faces, params, empty_pixel_value=np.nan, gpu_id=0)
 ```
 
 ## Test

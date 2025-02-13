@@ -6,6 +6,8 @@ ROOT_DIR = os.path.dirname(__file__)
 sys.path.append(os.path.join(ROOT_DIR, "src", "mesh2depth_gpu"))
 from version import __version__
 
+test_deps = open("test/requirements.txt", encoding="utf-8").read().split("\n")
+
 setup(
     name="mesh2depth_gpu",
     version=__version__,
@@ -21,4 +23,5 @@ setup(
     package_data={"mesh2depth_gpu": ["shaders/mesh.frag", "shaders/mesh.vert"]},
     include_package_data=True,
     install_requires=["numpy", "PyOpenGL", "PyGLM", "nptyping", "glcontext", "dacite"],
+    extras_require={"test": test_deps},
 )
